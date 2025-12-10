@@ -32,11 +32,12 @@ COLUMNAS_ESTANDAR = [
 COLUMNAS_CANTIDAD_BRUTA = {
     "Cargue": "Cargue",     
     "Descargue": "Descargue", 
-    "Entradas": "Entrada",   
+    "Entradas": "Entrada",
+    "Entrada":"Entrada",   
     "Salidas": "Salida",     
     "Cantidad": "Cantidad",   
     "Horas": "Horas",        
-    "Kg Cargue": "Kg_Cargue",
+    "kg Cargue": "Kg_Cargue",
     "Kg Descargue": "Kg_Descargue"
 }
 
