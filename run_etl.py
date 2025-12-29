@@ -2,7 +2,7 @@
 
 import os
 import shutil
-# from datetime import date # Ya no se usa para el Reporte SAC
+from datetime import datetime, date # ✅ CORRECCIÓN: Importación de datetime/date al inicio
 from src import extract, transform, load
 from src.config import OUTPUT_FILENAME
 
@@ -16,7 +16,6 @@ WORK_DIR = os.path.join(BASE_DIR, "Work")
 OUTPUT_DIR = os.path.join(BASE_DIR, "Export", "Reportes")
 
 # Carpeta fuente de los archivos (¡AJUSTAR ESTA RUTA!)
-# Ejemplo: C:\Users\usuario\Documentos\Archivos_a_procesar
 SOURCE_DIR = "C:\\Users\\sopex\\Cold Chile S.A\\Excelencia Operacional - Excelencia Operacional\\Daniel\\Desarrollos\\etl_process_kilos_icestar\\Import\\Kilos_Fuente" 
 
 
@@ -56,7 +55,7 @@ def setup_environment(source_dir, work_dir):
         print("⚠️ Advertencia: No se encontraron archivos XLSX/XLSM para procesar.")
         return False
         
-    print(f"  -> ✅ {len(copied_files)} archivos copiados a {work_dir}")
+    print(f"  -> ✅ {len(copied_files)} archivos copiados a {work_dir}")
     return copied_files
 
 
@@ -69,8 +68,8 @@ def main():
     today_date = date.today()
     
     print("=" * 50)
-    print(f"      🚀 INICIO DE PROCESO ETL - MOVIMIENTOS VTA 🚀      ")
-    print(f"      Fecha de Ejecución: {today_date.strftime('%Y-%m-%d')}")
+    print(f"      🚀 INICIO DE PROCESO ETL - MOVIMIENTOS VTA 🚀      ")
+    print(f"      Fecha de Ejecución: {today_date.strftime('%Y-%m-%d')}")
     print("=" * 50)
 
     consolidated_data = []
@@ -89,24 +88,21 @@ def main():
         
         for file_path in files_to_process:
             file_name = os.path.basename(file_path)
-            print(f"  -> Procesando {file_name}...")
+            # Ya no se imprime aquí, se imprime dentro de extract.extract_data_from_excel
             
-            raw_data = extract.extract_data_from_workbook(file_path)
+            raw_data = extract.extract_data_from_excel(file_path)
             transformed_chunk = transform.clean_and_standardize(raw_data)
             
             if transformed_chunk:
-                print(f"    -> ✅ {len(transformed_chunk)} filas listas para consolidación.")
+                print(f"    -> ✅ {len(transformed_chunk)} filas listas para consolidación.")
                 consolidated_data.extend(transformed_chunk)
             else:
-                print(f"    -> ⚠️ Archivo {file_name} procesado, pero sin datos útiles para consolidación.")
+                print(f"    -> ⚠️ Archivo {file_name} procesado, pero sin datos útiles para consolidación.")
 
         # 3. CARGA (Consolidación)
         if consolidated_data:
             print(f"\n-> Paso 3: Carga (Consolidación) | Total: {len(consolidated_data)} filas...")
             load.create_consolidated_xlsx(consolidated_data, OUTPUT_DIR) 
-            
-            # ⚠️ El Paso 4 (Reporte SAC) ha sido eliminado
-
         else:
             print("\n-> Proceso ETL finalizado sin datos para consolidar.")
 
@@ -121,5 +117,5 @@ def main():
 
 
 if __name__ == "__main__":
-    from datetime import datetime, date # Necesitamos date para el encabezado
+    # La importación aquí ya no es necesaria, pero no afecta si se deja
     main()

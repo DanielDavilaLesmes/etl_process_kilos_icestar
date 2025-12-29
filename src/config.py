@@ -1,45 +1,98 @@
 # src/config.py
+# Módulo de configuración global del ETL.
 
 # ==============================================================================
 # 1. METADATOS Y VARIABLES GENERALES
 # ==============================================================================
 
-# Nombre del archivo consolidado de salida AHORA ES XLSX
 OUTPUT_FILENAME = "Movimientos_VTA_Consolidado.xlsx" 
-
-# Nombre del archivo de log para el reporte de cumplimiento SAC
 SAC_LOG_FILENAME = "SAC_Reporte_Cumplimiento.log"
 
-# Columna Estándar de Salida (con TIPO, SUBTIPO y CANTIDAD_MOVIMIENTO)
+# Columna Estándar de Salida (Estructura final con 17 columnas)
 COLUMNAS_ESTANDAR = [
     'FECHA_MOVIMIENTO', 
-    'CLIENTE', 
-    'TIPO_MOVIMIENTO',       # Título completo de la sección (ej: CARGUE Y/O DESCARGUE (VTA019))
-    'SUBTIPO_MOVIMIENTO',    # Cabecera específica (ej: Cargue, Descargue, Horas, Cantidad)
-    'CANTIDAD_MOVIMIENTO',   # Valor numérico extraído
-    'ORIGEN_SECCION',
-    'ORIGEN_HOJA',        # Nombre de la cabecera bruta (ej: Cargue, Descargue)
-    'FUENTE_ARCHIVO'         # Nombre del archivo fuente
+    'CLIENTE',                   
+    'CLIENTE_ESTANDAR',          
+    'NIT',                       
+    'TIPO_MOVIMIENTO',           
+    'TIPO_MOVIMIENTO_LIMPIO',    
+    'CLASIFICACION_VTA',         
+    'SUBTIPO_MOVIMIENTO',        
+    'SUBTIPO_MOVIMIENTO_LIMPIO', 
+    'CLASIFICACION_SUBTIPO',     
+    'CANTIDAD_MOVIMIENTO',
+    'TARIFA',                   # Nueva columna
+    'TOTAL',                    # Nueva columna
+    'OBSERVACIONES',            # Nueva columna
+    'ORIGEN_SECCION',        
+    'ORIGEN_HOJA',           
+    'FUENTE_ARCHIVO'         
 ]
-
-# ⚠️ La lógica de cliente es dinámica en extract.py
 
 # ==============================================================================
 # 2. LÓGICA DE EXTRACCIÓN DINÁMICA
 # ==============================================================================
 
-# Cabeceras que contienen la cantidad/valor a extraer
+CABECERA_FECHA = "Fecha"
+
+# Mapeo de Cabeceras de Cantidad/Valor (Bruto -> Estándar)
 COLUMNAS_CANTIDAD_BRUTA = {
-    "Cargue": "Cargue",     
-    "Descargue": "Descargue", 
-    "Entradas": "Entrada",
-    "Entrada":"Entrada",   
-    "Salidas": "Salida",     
-    "Cantidad": "Cantidad",   
-    "Horas": "Horas",        
-    "kg Cargue": "Kg_Cargue",
-    "Kg Descargue": "Kg_Descargue"
+    "Cargue": "CARGUE",     
+    "Descargue": "DESCARGUE", 
+    "Entradas": "ENTRADA",   
+    "Salidas": "SALIDA",     
+    "Cantidad": "CANTIDAD",   
+    "Horas": "HORAS",        
+    "Kg Cargue": "KG_CARGUE_VTA43", 
+    "Kg Descargue": "KG_DESCARGUE",
+    "Cargue cx": "CARGUE_CX",
+    "Descargue cx": "DESCARGUE_CX",
+    "Posiciones Contratadas": "POSICIONES_CONTRATADAS",
+    "Posiciones Ocupadas": "POSICIONES_OCUPADAS"
 }
 
-# Cabecera que siempre contiene la fecha
-CABECERA_FECHA = "Fecha"
+# Mapeo de Cabeceras de Tarifa (Bruto -> Estándar)
+COLUMNAS_TARIFA_BRUTA = {
+    "Tarifa": "TARIFA",
+    "Tarifas": "TARIFA",
+    "Tarifa c/u": "TARIFA",
+    "Tarifa unitaria": "TARIFA"
+}
+
+# Mapeo de Cabeceras de Total (Bruto -> Estándar)
+COLUMNAS_TOTAL_BRUTA = {
+    "Total": "TOTAL",
+    "Subtotal": "TOTAL",
+    "Total General": "TOTAL"
+}
+
+# Cabeceras que contienen información de observaciones o texto descriptivo
+COLUMNAS_OBSERVACIONES_BRUTAS = [
+    "Nota",                       
+    "Facturas correspondientes",  
+    "Proveedor",
+    "Remision"                     # Remisión se incluye para contexto
+]
+
+# ==============================================================================
+# 3. CLASIFICACIÓN DE MOVIMIENTOS Y CLIENTES
+# ==============================================================================
+
+# Clasificación de VTA (Usando TIPO_MOVIMIENTO_LIMPIO = VTA###)
+VTA_CLASSIFICATION_MAP = {
+    "INGRESO": ["VTA010", "VTA037"], 
+    "SALIDA": ["VTA012", "VTA014"],
+    "INTERNO": ["VTA017", "VTA029"],
+    "SERVICIO_OPERACIONAL": ["VTA019", "VTA036", "VTA011", "VTA021"],
+    "SERVICIO_AUXILIAR": ["VTA025"],
+    "ALMACENAMIENTO": ["VTA008"]
+}
+
+# Clasificación de Subtipos (Usando SUBTIPO_MOVIMIENTO_LIMPIO)
+SUBTIPO_CLASSIFICATION_MAP = {
+    "KILOS_O_PESO": ["KG_CARGUE_VTA43", "KG_DESCARGUE"],
+    "UNIDADES_Y_OTROS": ["CARGUE", "DESCARGUE", "CARGUE_CX", "DESCARGUE_CX", "CANTIDAD", "POSICIONES_CONTRATADAS", "POSICIONES_OCUPADAS"],
+    "TIEMPO_O_COSTO": ["HORAS"]
+}
+
+# Nota: CLIENT_MAPPING se carga desde 'client_mapping.json' en transform.py
