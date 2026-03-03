@@ -21,9 +21,9 @@ COLUMNAS_ESTANDAR = [
     'SUBTIPO_MOVIMIENTO_LIMPIO', 
     'CLASIFICACION_SUBTIPO',     
     'CANTIDAD_MOVIMIENTO',
-    'TARIFA',                   # Nueva columna
-    'TOTAL',                    # Nueva columna
-    'OBSERVACIONES',            # Nueva columna
+    'TARIFA',                   
+    'TOTAL',                    
+    'OBSERVACIONES',            
     'ORIGEN_SECCION',        
     'ORIGEN_HOJA',           
     'FUENTE_ARCHIVO'         
@@ -48,7 +48,12 @@ COLUMNAS_CANTIDAD_BRUTA = {
     "Cargue cx": "CARGUE_CX",
     "Descargue cx": "DESCARGUE_CX",
     "Posiciones Contratadas": "POSICIONES_CONTRATADAS",
-    "Posiciones Ocupadas": "POSICIONES_OCUPADAS"
+    "Posiciones Ocupadas": "POSICIONES_OCUPADAS",
+    "DIFERENCIA":"POS ADICIONALES",
+    "Saldo cobro":"POSICIONES_OCUPADAS",
+    "Saldo inventario":"POSICIONES_OCUPADAS",
+    "Canastas":"CANTIDAD"
+
 }
 
 # Mapeo de Cabeceras de Tarifa (Bruto -> Estándar)
